@@ -4,7 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "nodemon index.js"
   },
   "repository": {
     "type": "git",
@@ -18,6 +19,7 @@
   },
   "homepage": "https://github.com/rhuannixon/api-hapi#readme",
   "dependencies": {
-    "@hapi/hapi": "^19.0.5"
+    "@hapi/hapi": "^19.0.5",
+    "cors": "^2.8.5"
   }
 }
