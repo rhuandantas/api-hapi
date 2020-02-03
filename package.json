@@ -16,5 +16,8 @@
   "bugs": {
     "url": "https://github.com/rhuannixon/api-hapi/issues"
   },
-  "homepage": "https://github.com/rhuannixon/api-hapi#readme"
+  "homepage": "https://github.com/rhuannixon/api-hapi#readme",
+  "dependencies": {
+    "@hapi/hapi": "^19.0.5"
+  }
 }
