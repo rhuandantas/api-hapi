@@ -19,7 +19,20 @@
   },
   "homepage": "https://github.com/rhuannixon/api-hapi#readme",
   "dependencies": {
-    "@hapi/hapi": "^19.0.5",
-    "cors": "^2.8.5"
+    "@commercial/jwt": "^2.0.0",
+    "@hapi/boom": "^9.1.0",
+    "@hapi/hapi": "^19.1.1",
+    "@hapi/inert": "^6.0.1",
+    "@hapi/joi": "^17.1.1",
+    "@hapi/lab": "^22.0.4",
+    "@hapi/vision": "^6.0.0",
+    "bcrypt": "^4.0.1",
+    "cors": "^2.8.5",
+    "dotenv": "^8.2.0",
+    "hapi-swagger": "^12.1.3",
+    "jsonwebtoken": "^8.5.1",
+    "knex": "^0.20.13",
+    "sqlite3": "^4.1.1",
+    "uuid": "^7.0.3"
   }
 }
