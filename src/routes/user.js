@@ -26,11 +26,7 @@ module.exports = [
             tags: ['api'],
             handler: userHandler.signup,
             validate: {
-                payload: joi.object({
-                    name: joi.string().required(),
-                    email: joi.string().email().required(),
-                    password: joi.string().required(),
-                })
+
             }
         }
     },
@@ -60,5 +56,23 @@ module.exports = [
             tags: ['api'],
             handler: userHandler.getAll,
         }
-    }
+    },
+
+    {
+        method: "POST",
+        path: "/forgotPassword",
+        config: {
+            tags: ['api'],
+            handler: userHandler.forgotPassword,
+        }
+    },
+
+    {
+        method: "POST",
+        path: "/changePassword",
+        config: {
+            tags: ['api'],
+            handler: userHandler.changePassword,
+        }
+    },
 ];

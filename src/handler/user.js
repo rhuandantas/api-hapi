@@ -1,19 +1,25 @@
-const encrypt = require("./../util/encrypt");
+const encrypt = require("../services/encrypt");
 const Boom = require("@hapi/boom");
-const auth = require("./../util/auth");
+const auth = require("../services/auth");
 const db = require("./../database/connection");
 const uuidv4 = require('uuid/v4');
+const crypto = require('crypto');
+const { sendMail } = require('./../services/mailer');
+const { props } = require('./../config/index');
+
 module.exports = {
     async signin(request, h) {
         try {
             const { email, password } = request.payload;
-            const user = await db('users').select('id', 'name', 'email', 'token', 'password').where('email', email).first();
+            const user = await db('users')
+                .select('id', 'name', 'email', 'token', 'password')
+                .where('email', email).first();
             if (user) {
                 const isValid = encrypt.validPassword(password, user.password);
                 if (isValid) {
                     token = await auth.generateAuthToken(user.email);
                     user.token = `Bearer ${token}`;
-                    db('users')
+                    await db('users')
                         .where('id', user.id)
                         .update('last_login', Date.now())
                     user.token = undefined;
@@ -42,10 +48,7 @@ module.exports = {
             })
             user.password = undefined;
             return h
-                .response({
-                    message: "User criado com sucesso",
-                    data: user
-                })
+                .response(user)
                 .code(201);
         } catch (err) {
             console.log(err.message);
@@ -82,11 +85,69 @@ module.exports = {
 
     async getAll(request, h) {
         try {
-            const users = await db('users').select('id', 'name', 'email', 'last_login');
+            const users = await db('users')
+                .select('id', 'name', 'email', 'last_login');
             return h.response(users).code(200);
         } catch (err) {
             console.log(err.message);
             return h.response({ mensagem: err.message }).code(500);
+        }
+    },
+
+    async forgotPassword(request, h) {
+        try {
+            const { email } = request.payload;
+            const user = await db('users')
+                .where('email', email)
+                .select('*')
+                .first();
+            if (!user) return h.response("User not found").code(400);
+
+            const code = crypto.randomBytes(4).toString('HEX');
+
+            const dataExpires = new Date().getTime() + parseInt(props.passwordResetExpires);
+            await db('users')
+                .where('id', user.id)
+                .update({
+                    passwordResetToken: code,
+                    passwordResetExpires: dataExpires
+                });
+
+            sendMail(user.email, code);
+
+            return h.response('Recovery email was sent').code(200);
+        } catch (error) {
+            console.log(error);
+        }
+    },
+
+    async changePassword(request, h) {
+        try {
+            const { email, code, newPassword } = request.payload;
+            const user = await db('users')
+                .where('email', email)
+                .select('*')
+                .first();
+
+            if (!user) return h.response("User not found").code(400);
+
+            if (Date.now() > user.passwordResetExpires)
+                return h.response("Code reset expired. require new code").code(400);
+
+            if (code !== user.passwordResetToken)
+                return h.response("Password reset token is invalid").code(400);
+
+            const password = encrypt.generateHash(newPassword);
+
+            await db('users')
+                .where('id', user.id)
+                .update({ password: password });
+
+            return h.response("Password changed successfully");
+
+        } catch (error) {
+            console.log(error);
+            return h.response(error.message).code(500);
         }
     }
 };
