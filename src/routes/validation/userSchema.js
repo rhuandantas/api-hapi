@@ -1,39 +1,39 @@
 "use strict";
 
-const joi = require("@hapi/joi");
+const Joi = require("@hapi/joi");
 
 module.exports = {
   signup: {
-    payload: joi.object({
-      name: joi.string().required(),
-      email: joi.string().email().required(),
-      password: joi.string().required()
+    payload: Joi.object({
+      name: Joi.string().required(),
+      email: Joi.string().email().required(),
+      password: Joi.string().required()
     })
   },
   signin: {
-    payload: joi.object({
-      email: joi.string().email().required(),
-      password: joi.string().required()
+    payload: Joi.object({
+      email: Joi.string().email().required(),
+      password: Joi.string().required()
     })
   },
   search: {
-    params: joi.object({
-      id: joi.string().required(),
+    params: Joi.object({
+      id: Joi.string().required(),
     }),
-    headers: joi.object({
-      'Authentication': joi.string().required()
+    headers: Joi.object({
+      'Authentication': Joi.string().required()
     })
   },
   changePassword: {
-    payload: joi.object({
-      code: joi.string().required(),
-      email: joi.string().email().required(),
-      newPassword: joi.string().required()
+    payload: Joi.object({
+      code: Joi.string().required(),
+      email: Joi.string().email().required(),
+      newPassword: Joi.string().required()
     })
   },
   forgotPassword: {
-    payload: joi.object({
-      email: joi.string().email().required()
+    payload: Joi.object({
+      email: Joi.string().email().required()
     })
   }
 };
