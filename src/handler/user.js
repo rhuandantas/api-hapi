@@ -52,14 +52,14 @@ module.exports = {
                 .code(201);
         } catch (err) {
             console.log(err.message);
-            return h.response({ mensagem: err.message }).code(500);
+            return Boom.internal(err.message);
         }
     },
 
     async search(request, h) {
         try {
             var token = request.headers.authentication.replace('Bearer ', '');
-            if (!token) return h.response({ mensagem: "Não autorizado" }).code(401);
+            if (!token) return Boom.unauthorized("Não autorizado");
 
             await auth.verify(h, token);
 
@@ -69,7 +69,7 @@ module.exports = {
                 .first();
 
             if (!user) {
-                return h.response({ mensagem: "Usuário não encontrado." }).code(401);
+                return Boom.badRequest("Usuário não encontrado.");
             }
             user.token = undefined;
             user.password = undefined;
@@ -78,8 +78,8 @@ module.exports = {
                 .code(200);
         } catch (err) {
             if (err.message === "jwt expired")
-                return h.response({ mensagem: "Sessão inválida" }).code(401);
-            return h.response({ mensagem: err.message }).code(500);
+                return Boom.unauthorized("Sessão inválida");
+            return Boom.internal(err.message);
         }
     },
 
@@ -89,8 +89,8 @@ module.exports = {
                 .select('id', 'name', 'email', 'last_login');
             return h.response(users).code(200);
         } catch (err) {
-            console.log(err.message);
-            return h.response({ mensagem: err.message }).code(500);
+            console.log(err);
+            return Boom.internal(err.message);
         }
     },
 
@@ -101,7 +101,7 @@ module.exports = {
                 .where('email', email)
                 .select('*')
                 .first();
-            if (!user) return h.response("User not found").code(400);
+            if (!user) return Boom.badRequest("User not found");
 
             const code = crypto.randomBytes(4).toString('HEX');
 
@@ -118,6 +118,7 @@ module.exports = {
             return h.response('Recovery email was sent').code(200);
         } catch (error) {
             console.log(error);
+            Boom.internal(err.message);
         }
     },
 
@@ -129,13 +130,13 @@ module.exports = {
                 .select('*')
                 .first();
 
-            if (!user) return h.response("User not found").code(400);
+            if (!user) return Boom.badRequest("User not found");
 
             if (Date.now() > user.passwordResetExpires)
-                return h.response("Code reset expired. require new code").code(400);
+                return Boom.badRequest("Code reset expired. require new code");
 
             if (code !== user.passwordResetToken)
-                return h.response("Password reset token is invalid").code(400);
+                return Boom.badRequest("Password reset token is invalid");
 
             const password = encrypt.generateHash(newPassword);
 
@@ -147,7 +148,7 @@ module.exports = {
 
         } catch (error) {
             console.log(error);
-            return h.response(error.message).code(500);
+            return Boom.internal(error.message);
         }
     }
 };
