@@ -10,8 +10,8 @@ const Pack = require('./package');
 const init = async () => {
     const swaggerOptions = {
         info: {
-            title: 'Books API Documentation',
-            version: '0.0.1',
+            title: 'Hapi API Documentation',
+            version: Pack.version,
         }
     };
     const server = Hapi.server({
