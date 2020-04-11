@@ -7,7 +7,9 @@ exports.up = function (knex) {
         table.unique('email');
         table.string('password').notNullable();
         table.string('token');
-        table.time('last_login');
+        table.string('passwordResetToken');
+        table.timestamp('passwordResetExpires');
+        table.timestamp('last_login');
         table.timestamp('created_at').defaultTo(knex.fn.now());
     });
 };
