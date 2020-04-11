@@ -21,12 +21,12 @@ module.exports = {
                     user.token = `Bearer ${token}`;
                     await db('users')
                         .where('id', user.id)
-                        .update('last_login', Date.now())
+                        .update({ last_login: Date.now(), token: user.token })
                     user.token = undefined;
                     user.password = undefined;
                     return h
                         .response(user)
-                        .header("Authentication", token)
+                        .header("Authentication", `Bearer ${token}`)
                         .code(200);
                 }
             }
