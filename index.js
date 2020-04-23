@@ -6,6 +6,7 @@ const Inert = require('@hapi/inert');
 const Vision = require('@hapi/vision');
 const HapiSwagger = require('hapi-swagger');
 const Pack = require('./package');
+const laabr = require('laabr');
 
 const init = async () => {
     const swaggerOptions = {
@@ -16,7 +17,6 @@ const init = async () => {
     };
     const server = Hapi.server({
         port: 3000,
-        host: 'localhost'
     });
 
     server.route(routes);
@@ -26,14 +26,16 @@ const init = async () => {
         {
             plugin: HapiSwagger,
             options: swaggerOptions
+        },
+        {
+            plugin: laabr,
+            options: {},
         }
     ]);
     await server.start();
-    console.log('Server running on %s', server.info.uri);
 };
 
 process.on('unhandledRejection', (err) => {
-
     console.log(err);
     process.exit(1);
 });
