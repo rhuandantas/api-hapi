@@ -124,7 +124,9 @@ module.exports = {
 
     async changePassword(request, h) {
         try {
-            const { email, code, newPassword } = request.payload;
+            const { email, code, newPassword, confirmPassword } = request.payload;
+            if (newPassword !== confirmPassword)
+                return Boom.badRequest('new password and confirm password are different')
             const user = await db('users')
                 .where('email', email)
                 .select('*')
@@ -132,11 +134,11 @@ module.exports = {
 
             if (!user) return Boom.badRequest("User not found");
 
-            if (Date.now() > user.passwordResetExpires)
-                return Boom.badRequest("Code reset expired. require new code");
-
             if (code !== user.passwordResetToken)
                 return Boom.badRequest("Password reset token is invalid");
+
+            if (Date.now() > user.passwordResetExpires)
+                return Boom.badRequest("Code reset expired. require new code");
 
             const password = encrypt.generateHash(newPassword);
 
