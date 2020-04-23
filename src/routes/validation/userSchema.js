@@ -7,13 +7,13 @@ module.exports = {
     payload: Joi.object({
       name: Joi.string().required(),
       email: Joi.string().email().required(),
-      password: Joi.string().required()
+      password: Joi.string().min(6).max(20).required()
     })
   },
   signin: {
     payload: Joi.object({
       email: Joi.string().email().required(),
-      password: Joi.string().required()
+      password: Joi.string().min(6).max(20).required()
     })
   },
   search: {
@@ -28,7 +28,8 @@ module.exports = {
     payload: Joi.object({
       code: Joi.string().required(),
       email: Joi.string().email().required(),
-      newPassword: Joi.string().required()
+      newPassword: Joi.string().min(6).max(20).required(),
+      confirmPassword: Joi.string().min(6).max(20).required(),
     })
   },
   forgotPassword: {
