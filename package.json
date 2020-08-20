@@ -27,7 +27,7 @@
     "@hapi/joi": "^17.1.1",
     "@hapi/lab": "^22.0.4",
     "@hapi/vision": "^6.0.0",
-    "bcrypt": "^4.0.1",
+    "bcrypt": "^5.0.0",
     "cors": "^2.8.5",
     "dotenv": "^8.2.0",
     "hapi-swagger": "^12.1.3",
